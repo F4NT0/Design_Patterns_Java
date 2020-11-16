@@ -19,21 +19,34 @@ Com o padrão Singleton uma Classe gerencia a própria instância dela além de 
 * Exemplo de implementação do Padrão Singleton:
 
 ```java
-public class SingletonEx{
-    private static SingletonEx uniqueInstance;
+import java.util.ArrayList;
 
-    private SingletonEx(){
-        //...    
+public class CarrinhoCompras {
+    private static CarrinhoCompras unicoCarrinho;
+    private ArrayList<String> produtosGuardados = new ArrayList<>();
+
+    private CarrinhoCompras(){}
+
+    public static synchronized CarrinhoCompras getInstance(){
+        if(unicoCarrinho == null){
+            unicoCarrinho = new CarrinhoCompras();
+        }
+        return unicoCarrinho;
     }
 
-    public static synchronized SingletonEx getInstance(){
-        if(uniqueInstance == null){
-            uniqueInstance = new SingletonEx();
+    public void addProduto(String prod){
+        produtosGuardados.add(prod);
+    }
+
+    public void getCarrinho(){
+        System.out.println("\nCARRINHO:\n");
+        for(String valor : produtosGuardados){
+            System.out.println("Produto Adicionado: " + valor);
         }
-        return uniqueInstance;
     }
 }
 ```
+
 * Utiliza-se o `synchronized` para que o método não possa ser usado por duas Threads ao mesmo tempo.
 * O construtor é privado evitando que essa Classe seja instânciada fora dela, dessa forma só pode ser instânciado utilizando o Método público _getInstance()_. Como o _getInstance()_ é estático ele pode ser chamado de outra classe sem precisar instanciar a classe Singleton. Caso a Classe já tenha sido instanciado o Atributo _uniqueInstance_ não será nulo, assim vai retornar a única instância já criada.
 
@@ -66,4 +79,230 @@ deleteObserver()| Deleta o Observer do Subject
 notifyObservers()|Avisa os Observers de atualizações
 setChanged()|Atualiza informações no Subject
 
+Para usarmos essas Funções, devemos importar o **Observer** e o **Observable**:
+
+```java
+import java.util.Observable;
+import java.util.Observer;
+```
+
 A classe Observable nada mais faz do que monitorar todos os observadores e os notificar sobre alguma alteração no estado.
+
+* **Exemplo de Implementação:**
+
+Criando o Subject:
+
+```java
+@Deprecated
+class Subject extends Observable{
+    CarrinhoCompras carrinho;
+    String produto;
+
+    public Subject(CarrinhoCompras car){
+        carrinho = car;
+    }
+
+    public void setNovoProduto(String prod){
+        produto = prod;
+        carrinho.addProduto(produto);
+        setChanged();
+        notifyObservers();
+    }
+
+    public String getProduto(){
+        return produto;
+    }
+
+    public void getProdutos(){
+        carrinho.getCarrinho();
+    }
+}
+```
+
+Criando o Observer:
+
+```java
+@Deprecated
+class ObserverClient implements Observer{   
+    Observable subject;
+    String produtoNovo;
+
+    public ObserverClient(Observable sub){
+        super();
+        subject = sub;
+        subject.addObserver(this);
+    }
+
+    @Override
+    public void update(Observable sub, Object arg1){
+        if(sub instanceof Subject){
+            Subject subject = (Subject) sub;
+            produtoNovo = subject.getProduto();
+            System.out.println("Produto " + produtoNovo + " adicionado com sucesso!");
+        }
+    }
+}
+```
+
+Agora criamos a Classe principal, onde vão ser chamados o Subject e o Observer:
+
+```java
+public class AtualizaCarrinho {
+    public static void main(String args[]){
+        String novoProduto = "PS5";
+        Object none = null;
+        CarrinhoCompras carrinho = CarrinhoCompras.getInstance();
+        Subject subject = new Subject(carrinho);
+        ObserverClient observer = new ObserverClient(subject);
+        subject.setNovoProduto(novoProduto);
+        observer.update(subject,none);
+    }
+}
+```
+
+Como é mostrado acima, o Subject é quem lida com o Singleton criado, onde é o carrinho do E-commerce, então o Object lida com o recebimento do Update do Subject
+
+---
+
+# Strategy e Factory
+
+**Strategy** serve para que você pegue uma classe que faz algo específico em diversas maneiras diferentes e extraia todos esses algoritmos para classes separadas chamadas _strategies_.
+
+A classe original, chamada _conext_ deve ter um campo para armazenar uma referência para uma dessas estratégias. O contexto delega o trabalho para um objeto estratégia ao invés de executá-lo por conta própria.
+
+O padrão Strategy é muito comum no código Java. É frequentemente usado em várias estruturas para fornecer aos usuários uma maneira de alterar o comportamento de uma classe sem estendê-la.
+
+* Implementação do Strategy:
+
+Primeira coisa é definir uma Interface comum para todas as formas de pagamento
+
+```java
+interface PagamentoEstrategia{
+    boolean pago(int valorTotal);
+    void detalhesPagamentos();
+}
+```
+
+Cada Classe de Pagamento que são comuns vão ter que implementar os Métodos colocados na Interface, como por exemplo o Pagamento por paypal:
+
+```java
+class PagamentoPaypal implements PagamentoEstrategia{
+    private static final Map<String,String> database = new HashMap<String,String>();
+    private String username;
+    private String password;
+
+    public PagamentoPaypal(String nome,String senha){
+        username = nome;
+        password = senha;
+    }
+
+    public String getUsername(){
+        return username;
+    }
+
+    public String getPassword(){
+        return password;
+    }
+
+    @Override
+    public void detalhesPagamentos(){
+        database.put("Gabriel Fanto","1234");
+        if(password.equals(database.get(username))){
+            System.out.println("Verificação feita com sucesso!");
+        }else{
+            System.out.println("Usuário não encontrado");
+        }
+    }
+
+    @Override
+    public boolean pago(int valor){
+        if(valor > 0){
+            System.out.println("R$ " + valor + " pago em Paypal");
+            return true;
+        }else{
+            return false;
+        }
+    }    
+}
+```
+
+E outra bem parecida que é para pagamento com Cartão de Crédito:
+
+```java
+class PagamentoCartaoCredito implements PagamentoEstrategia{
+    private static final Map<String,String> database = new HashMap<String,String>();
+    private String username;
+    private String password;
+
+    public PagamentoCartaoCredito(String nome,String senha){
+        username = nome;
+        password = senha;
+    }
+    
+    public String getUsername(){
+        return username;
+    }
+
+    public String getPassword(){
+        return password;
+    }
+
+    @Override
+    public void detalhesPagamentos(){
+        database.put("Gabriel Fanto","1234");
+        if(password.equals(database.get(username))){
+            System.out.println("Verificação feita com sucesso!");
+        }else{
+            System.out.println("Usuário não encontrado");
+        }
+    }
+
+    @Override
+    public boolean pago(int valor){
+        if(valor > 0){
+            System.out.println("R$ " + valor + " pago no Cartão de Crédito");
+            return true;
+        }else{
+            return false;
+        }
+    }   
+}
+```
+
+Então dai iremos criar uma Classe Main para que o usuário selecione qual forma de pagamento e com isso sabermos qual Estratégia de Pagamento vai ser feito:
+
+```java
+public class MetodosPagamento {
+    private static PagamentoEstrategia estrategia;
+    public static void main(String[] args){
+        Scanner entrada = new Scanner(System.in);
+        System.out.println("Selecione uma Forma de Pagamento: ");
+        System.out.println("1 - Paypal");
+        System.out.println("2 - Cartão de Crédito");
+        int choice = entrada.nextInt();
+        
+        if(choice == 1){
+            estrategia = new PagamentoPaypal("Gabriel Fanto", "1234");
+        }else{
+            if(choice == 2){
+                estrategia = new PagamentoCartaoCredito("Gabriel Fanto","1234");
+            }else{
+                System.out.println("Escolha não permitida!");
+            }
+        }
+        entrada.close();
+
+        //Saída
+        estrategia.detalhesPagamentos();
+        estrategia.pago(200);
+    }   
+}
+```
+
+---
+
+# Facade
+
+**Facade** oculta toda a complexidade de uma ou mais classes através de uma Fachada.
+O Facade fornece uma interface simplificada para uma Biblioteca, um Framework ou qualquer outro conjunto complexo de Classes.
+
