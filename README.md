@@ -26,3 +26,18 @@ fachada|classe a ser definida na camada de negócios como um único ponto de ace
 Cada grupo deve entregar um arquivo texto com uma  **descrição** e **screenshots** das classes/métodos implementados para cada padrão de projeto.
 
 Enviar o Link desse Repositório também.
+
+# Como testar
+
+Acesse o Diretório _src/Exercício/_ para usar os comando Abaixos
+
+Design Pattern|Comando de Terminal
+|---|---|
+Singleton| `javac CarrinhoCompras.java Testes.java ` e depois `java Testes`
+Observer| `javac CarrinhoCompras.java AtualizaCarrinho.java ` e depois `java AtualizaCarrinho`
+Strategy|`javac MetodosPagamento.java` e depois `java MetodosPagamento`
+Facade|`javac FacadeEx.java ` e depois `java FacadeEx`
+
+# Explicação Simples dos Design Patterns
+
+* [Clique Aqui](src/Exercício/README.md) para ver a explicação.
