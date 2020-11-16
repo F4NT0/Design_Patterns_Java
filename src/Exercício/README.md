@@ -304,5 +304,74 @@ public class MetodosPagamento {
 # Facade
 
 **Facade** oculta toda a complexidade de uma ou mais classes através de uma Fachada.
-O Facade fornece uma interface simplificada para uma Biblioteca, um Framework ou qualquer outro conjunto complexo de Classes.
 
+* O Facade fornece uma interface simplificada para uma Biblioteca, um Framework ou qualquer outro conjunto complexo de Classes.
+* Todas as Classes e bibliotecas usadas serão chamadas e utilizadas dentro de um Facade, onde depois o Método criado nele vai ser chamado na Classe Main, como no exemplo abaixo:
+
+Criando as Classes que serão utilizadas:
+
+```java
+class Ecommerce{
+
+    String nome;
+
+    public Ecommerce(String nome){
+        this.nome = nome;
+    }
+
+    public String getNomeEcommerce(){
+        return nome;
+    }
+}
+
+class Produto{
+    String nome;
+
+    public Produto(String nome){
+        this.nome = nome;
+    }
+
+    public String getNomeProduto(){
+        return nome;
+    }
+}
+
+class Pedido{
+    int quantidade;
+
+    public Pedido(int quant){
+        quantidade = quant;
+    }
+
+    public int getQuantidade(){
+        return quantidade;
+    }
+}
+```
+
+Criamos um Facade que vai pegar todas as informações necessárias dessas classes:
+
+```java
+class Facade{
+    public void infos(String ecommerce,String produto, int quantidade){
+        Ecommerce novoEcommerce = new Ecommerce(ecommerce);
+        Produto novoProduto = new Produto(produto);
+        Pedido novoPedido = new Pedido(quantidade);
+
+        System.out.println("Ecommerce se chama " + novoEcommerce.getNomeEcommerce());
+        System.out.println("Produto se chama " + novoProduto.getNomeProduto());
+        System.out.println("Numero de Itens no Pedido são " + novoPedido.getQuantidade());
+    }
+}
+```
+
+Depois, iremos chamar o Facade e a função que construimos dela na nossa Main:
+
+```java
+public class FacadeEx {
+    public static void main(String[] args){
+        Facade testeFacade = new Facade();
+        testeFacade.infos("Playstation","PS5",1);
+    }    
+}
+```

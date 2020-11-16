@@ -1,3 +1,7 @@
+/**
+ * Lidando com várias classes usando Facade
+ */
+
 class Ecommerce{
 
     String nome;
