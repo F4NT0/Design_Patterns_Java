@@ -375,3 +375,22 @@ public class FacadeEx {
     }    
 }
 ```
+
+---
+
+# Exemplos
+
+Todos os Exemplos completos dos mostrados acima se encontram no Repositório **https://github.com/F4NT0/Design_Patterns_Java**
+
+---
+
+# Como testar
+
+Acesse o Diretório _src/Exercício/_ para usar os comando Abaixos
+
+Design Pattern|Comando de Terminal
+|---|---|
+Singleton| `javac CarrinhoCompras.java Testes.java ` e depois `java Testes`
+Observer| `javac CarrinhoCompras.java AtualizaCarrinho.java ` e depois `java AtualizaCarrinho`
+Strategy|`javac MetodosPagamento.java` e depois `java MetodosPagamento`
+Facade|`javac FacadeEx.java ` e depois `java FacadeEx`
