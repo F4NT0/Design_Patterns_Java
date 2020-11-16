@@ -43,3 +43,27 @@ public class SingletonEx{
 
 ---
 
+# Observer
+
+O padrão Observer é utilizado quando se precisa manter os objetos atualizados quando algo importante ocorre.
+
+O Padrão Observer funciona como uma Assinatura de Jornal, onde tem uma Editora que publica as edições e as pessoas que assinam os jornais dessa editora recebem as novas edições assim que elas são Publicadas.
+
+Nesse exemplo, a Editora no código é o **SUBJECT** e os Assinantes são os chamados **OBSERVER**
+
+Os **OBSERVER**s registram-se no **SUBJECT** para receber atualizações quando os dados do **SUBJECT** são alterados. Os **OBSERVER**s também podem cancelar o seu registro e dessa forma não receber mais nenhuma atualização do **SUBJECT**.
+
+Portanto existem MUITOS **OBSERVER**s para um único **SUBJECT**.
+
+Em java, as APIs mais gerais possuem a interface Observer e a Classe Observable no pacote **java.util**.
+
+A classe Observable possui os Seguintes Métodos:
+
+Nome da Função|Uso
+|---|---|
+addObserver()| Adicina um Observer a um Subject
+deleteObserver()| Deleta o Observer do Subject
+notifyObservers()|Avisa os Observers de atualizações
+setChanged()|Atualiza informações no Subject
+
+A classe Observable nada mais faz do que monitorar todos os observadores e os notificar sobre alguma alteração no estado.
